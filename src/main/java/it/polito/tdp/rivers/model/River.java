@@ -51,6 +51,16 @@ public class River {
 			flows = new ArrayList<Flow>();
 		return flows;
 	}
+	
+	public double getMaxFlow() {
+		double max=0;
+		for(Flow f:flows) {
+			if(f.getFlow()>max)
+				max=f.getFlow();
+		}
+		
+		return max;
+	}
 
 	@Override
 	public String toString() {
@@ -78,4 +88,5 @@ public class River {
 			return false;
 		return true;
 	}
+	
 }
