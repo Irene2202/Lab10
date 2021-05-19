@@ -52,24 +52,47 @@ public class FXMLController {
 
     @FXML
     void doSelezionaFiume(ActionEvent event) {
+    	txtResult.clear();
     	River r=boxRiver.getValue();
     	model.selezionaFiume(r);
     	txtNumMeasurements.setText(""+r.getFlows().size());
-    	txtFMed.setText(""+r.getFlowAvg());
     	txtStartDate.setText(""+r.getFlows().get(0).getDay());
     	txtEndDate.setText(""+r.getFlows().get(r.getFlows().size()-1).getDay());
+    	String media=String.format("%.4f", r.getFlowAvg());
+    	txtFMed.setText(media);
     }
     
     @FXML
     void doSimulazione(ActionEvent event) {
-    	//TO-DO: controlli input
     	River r=boxRiver.getValue();
     	String kS=txtK.getText();
-    	float k=Float.parseFloat(kS);
+    	
+    	if(r==null) {
+    		txtResult.setText("Fiume non selezionato");
+    		return;
+    	}
+    	else if(kS.isEmpty()) {
+    		txtResult.setText("Fattore di scala, k, non inserito");
+    		return;
+    	}
+    	
+    	float k;
+    	try {
+    		k=Float.parseFloat(kS);
+    	} catch (NumberFormatException e) {
+    		txtResult.setText("Il fattore di scala inserito non ha un formato valido");
+    		return;
+    	}
+    	
+    	
     	model.init(k, r);
     	model.run();
-    	txtResult.setText("Numero Giorni"+model.getNumGiorni());
-    	txtResult.appendText("\nC Media: "+model.getCMed());
+ 
+    	txtResult.setText("Numero Giorni con flusso in uscita insufficiente: "+model.getNumGiorni());
+    	String Cmax=String.format("%.4f", model.getCapienzaMax());
+    	txtResult.appendText("\nCapienza Massima del bacino idrico: "+Cmax);
+    	String Cmed=String.format("%.4f", model.getCMed());
+    	txtResult.appendText("\nCapienza Media del bacino idrico: "+Cmed);
     }
     
     @FXML // This method is called by the FXMLLoader when initialization is complete
